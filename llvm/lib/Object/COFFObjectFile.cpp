@@ -1115,7 +1115,14 @@ dynamic_reloc_iterator COFFObjectFile::dynamic_reloc_end() const {
 }
 
 uint8_t COFFObjectFile::getBytesInAddress() const {
-  return getArch() == Triple::x86_64 || getArch() == Triple::aarch64 ? 8 : 4;
+  switch (getArch()) {
+  case Triple::x86_64:
+  case Triple::aarch64:
+  case Triple::loongarch64:
+    return 8;
+  default:
+    return 4;
+  }
 }
 
 StringRef COFFObjectFile::getFileFormatName() const {
@@ -1132,6 +1139,8 @@ StringRef COFFObjectFile::getFileFormatName() const {
     return "COFF-ARM64EC";
   case COFF::IMAGE_FILE_MACHINE_ARM64X:
     return "COFF-ARM64X";
+  case COFF::IMAGE_FILE_MACHINE_LOONGARCH64:
+    return "COFF-loongArch64";
   case COFF::IMAGE_FILE_MACHINE_R4000:
     return "COFF-MIPS";
   default:
@@ -1484,6 +1493,26 @@ StringRef COFFObjectFile::getRelocationTypeName(uint16_t Type) const {
       LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_MIPS_JMPADDR16);
       LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_MIPS_REFWORDNB);
       LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_MIPS_PAIR);
+    default:
+      return "Unknown";
+    }
+    break;
+  case Triple::loongarch64:
+    switch (Type) {
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_ABSOLUTE);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_ADDR32);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_ADDR32NB);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_BRANCH26);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_SECREL);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_SECTION);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_ADDR64);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_ADDR_HI20);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_ADDR_LO12);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_ADDR64_LO20);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_ADDR64_HI12);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_BRANCH21);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_BRANCH16);
+      LLVM_COFF_SWITCH_RELOC_TYPE_NAME(IMAGE_REL_LARCH_REL32);
     default:
       return "Unknown";
     }
