@@ -12,10 +12,18 @@
 
 #include "LoongArchMCAsmInfo.h"
 #include "llvm/BinaryFormat/Dwarf.h"
+#include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCStreamer.h"
 #include "llvm/TargetParser/Triple.h"
 
 using namespace llvm;
+
+// TODO:add more?
+const MCAsmInfo::AtSpecifier COFFAtSpecifiers[] = {
+    {MCSymbolRefExpr::VK_COFF_IMGREL32, "IMGREL"},
+    {MCSymbolRefExpr::VK_WEAKREF, "WEAKREF"},
+    {MCSymbolRefExpr::VK_SECREL, "SECREL32"},
+};
 
 void LoongArchMCAsmInfoELF::anchor() {}
 
@@ -31,6 +39,28 @@ LoongArchMCAsmInfoELF::LoongArchMCAsmInfoELF(const Triple &TT) {
   SupportsDebugInformation = true;
   DwarfRegNumForCFI = true;
   ExceptionsType = ExceptionHandling::DwarfCFI;
+}
+
+void LoongArchMCAsmInfoMicrosoftCOFF::anchor() {}
+
+LoongArchMCAsmInfoMicrosoftCOFF::LoongArchMCAsmInfoMicrosoftCOFF(
+    const Triple &TT) {
+  PrivateGlobalPrefix = ".L";
+  PrivateLabelPrefix = ".L";
+
+  Data16bitsDirective = "\t.hword\t";
+  Data32bitsDirective = "\t.word\t";
+  Data64bitsDirective = "\t.xword\t";
+
+  AlignmentIsInBytes = false;
+  SupportsDebugInformation = true;
+  CodePointerSize = 8;
+
+  CommentString = "//";
+  ExceptionsType = ExceptionHandling::WinEH;
+  WinEHEncodingType = WinEH::EncodingType::Itanium;
+
+  initializeVariantKinds(COFFAtSpecifiers);
 }
 
 void LoongArchMCAsmInfoGNUCOFF::anchor() {}

@@ -26,6 +26,13 @@ public:
   explicit LoongArchMCAsmInfoELF(const Triple &TargetTriple);
 };
 
+class LoongArchMCAsmInfoMicrosoftCOFF : public MCAsmInfoMicrosoft {
+  void anchor() override;
+
+public:
+  explicit LoongArchMCAsmInfoMicrosoftCOFF(const Triple &Triple);
+};
+
 class LoongArchMCAsmInfoGNUCOFF : public MCAsmInfoGNUCOFF {
   void anchor() override;
 

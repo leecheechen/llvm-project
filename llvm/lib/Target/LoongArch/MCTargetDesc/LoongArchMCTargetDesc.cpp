@@ -65,7 +65,7 @@ static MCAsmInfo *createLoongArchMCAsmInfo(const MCRegisterInfo &MRI,
   MCAsmInfo *MAI;
 
   if (TT.isOSBinFormatCOFF()) {
-    MAI = new LoongArchMCAsmInfoGNUCOFF(TT);
+    MAI = new LoongArchMCAsmInfoMicrosoftCOFF(TT);
   } else {
     assert(TT.isOSBinFormatELF() && "Invalid target");
     MAI = new LoongArchMCAsmInfoELF(TT);
