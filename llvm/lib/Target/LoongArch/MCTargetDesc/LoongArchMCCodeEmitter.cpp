@@ -163,10 +163,10 @@ LoongArchMCCodeEmitter::getExprOpValue(const MCInst &MI, const MCOperand &MO,
       FixupKind = LoongArch::fixup_loongarch_abs64_hi12;
       break;
     case LoongArchMCExpr::VK_PCALA_HI20:
-      FixupKind = ELF::R_LARCH_PCALA_HI20;
+      FixupKind = LoongArch::fixup_loongarch_pcala_hi20;
       break;
     case LoongArchMCExpr::VK_PCALA_LO12:
-      FixupKind = ELF::R_LARCH_PCALA_LO12;
+      FixupKind = LoongArch::fixup_loongarch_pcala_lo12;
       break;
     case LoongArchMCExpr::VK_PCALA64_LO20:
       FixupKind = ELF::R_LARCH_PCALA64_LO20;

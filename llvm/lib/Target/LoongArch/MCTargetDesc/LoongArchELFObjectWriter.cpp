@@ -102,6 +102,10 @@ unsigned LoongArchELFObjectWriter::getRelocType(MCContext &Ctx,
     return ELF::R_LARCH_ABS64_LO20;
   case LoongArch::fixup_loongarch_abs64_hi12:
     return ELF::R_LARCH_ABS64_HI12;
+  case LoongArch::fixup_loongarch_pcala_hi20:
+    return ELF::R_LARCH_PCALA_HI20;
+  case LoongArch::fixup_loongarch_pcala_lo12:
+    return ELF::R_LARCH_PCALA_LO12;
   }
 }
 
