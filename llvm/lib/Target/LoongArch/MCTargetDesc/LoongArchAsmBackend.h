@@ -29,14 +29,15 @@ class LoongArchAsmBackend : public MCAsmBackend {
 
 protected:
   const MCSubtargetInfo &STI;
+  const Triple TheTriple;
   const MCTargetOptions &TargetOptions;
   bool Is64Bit;
 
 public:
-  LoongArchAsmBackend(const MCSubtargetInfo &STI, bool Is64Bit,
-                      const MCTargetOptions &Options)
+  LoongArchAsmBackend(const MCSubtargetInfo &STI, const Triple &TT,
+                      bool Is64Bit, const MCTargetOptions &Options)
       : MCAsmBackend(llvm::endianness::little, ELF::R_LARCH_RELAX), STI(STI),
-        TargetOptions(Options), Is64Bit(Is64Bit) {}
+        TheTriple(TT), TargetOptions(Options), Is64Bit(Is64Bit) {}
   ~LoongArchAsmBackend() override {}
 
   bool handleAddSubRelocations(const MCAssembler &Asm, const MCFragment &F,

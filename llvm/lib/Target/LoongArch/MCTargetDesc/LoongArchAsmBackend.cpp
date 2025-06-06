@@ -130,16 +130,17 @@ static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value,
     if (!TheTriple.isOSBinFormatCOFF())
       Ctx.reportError(Fixup.getLoc(), "pcala_hi20 fixup only support for coff");
     if (!isInt<20>(SignedValue))
-      Ctx.reportError(Fixup.getLoc(), "fixup value out of range");
+      Ctx.reportError(Fixup.getLoc(), "pcala_hi20 fixup value out of range");
     return Value & 0xfffffULL;
   case LoongArch::fixup_loongarch_pcala_lo12:
     if (!TheTriple.isOSBinFormatCOFF() || IsResolved) {
       Ctx.reportError(Fixup.getLoc(),
                       "pcala_lo12 fixup only support for coff or resolved");
     }
-    if (!isInt<12>(SignedValue))
-      Ctx.reportError(Fixup.getLoc(), "fixup value out of range");
-    return Value &= 0xfff;
+    Value &= 0x7ff;
+    if (!isInt<12>(Value))
+      Ctx.reportError(Fixup.getLoc(), "pcala_lo12 fixup value out of range");
+    return Value;
   }
 }
 
@@ -172,9 +173,7 @@ void LoongArchAsmBackend::applyFixup(const MCAssembler &Asm,
     return fixupLeb128(Ctx, Fixup, Data, Value);
 
   // Apply any target-specific value adjustments.
-  assert(STI != nullptr);
-  Value =
-      adjustFixupValue(Fixup, Value, Ctx, STI->getTargetTriple(), IsResolved);
+  Value = adjustFixupValue(Fixup, Value, Ctx, TheTriple, IsResolved);
 
   // Shift the value into position.
   Value <<= Info.TargetOffset;
@@ -531,9 +530,10 @@ class LoongArchELFAsmBackend : public LoongArchAsmBackend {
   uint8_t OSABI;
 
 public:
-  LoongArchELFAsmBackend(const MCSubtargetInfo &STI, uint8_t OSABI,
-                         bool Is64Bit, const MCTargetOptions &Options)
-      : LoongArchAsmBackend(STI, Is64Bit, Options), OSABI(OSABI) {}
+  LoongArchELFAsmBackend(const MCSubtargetInfo &STI, const Triple &TT,
+                         uint8_t OSABI, bool Is64Bit,
+                         const MCTargetOptions &Options)
+      : LoongArchAsmBackend(STI, TT, Is64Bit, Options), OSABI(OSABI) {}
 
   std::unique_ptr<MCObjectTargetWriter>
   createObjectTargetWriter() const override {
@@ -544,9 +544,9 @@ public:
 
 class LoongArchCOFFAsmBackend : public LoongArchAsmBackend {
 public:
-  LoongArchCOFFAsmBackend(const MCSubtargetInfo &STI, bool Is64Bit,
-                          const MCTargetOptions &Options)
-      : LoongArchAsmBackend(STI, Is64Bit, Options) {}
+  LoongArchCOFFAsmBackend(const MCSubtargetInfo &STI, const Triple &TT,
+                          bool Is64Bit, const MCTargetOptions &Options)
+      : LoongArchAsmBackend(STI, TT, Is64Bit, Options) {}
 
   std::unique_ptr<MCObjectTargetWriter>
   createObjectTargetWriter() const override {
@@ -563,8 +563,8 @@ MCAsmBackend *llvm::createLoongArchAsmBackend(const Target &T,
   if (TT.isUEFI()) {
     assert(TT.isOSBinFormatCOFF() &&
            "Only COFF format is supported in UEFI environment.");
-    return new LoongArchCOFFAsmBackend(STI, TT.isArch64Bit(), Options);
+    return new LoongArchCOFFAsmBackend(STI, TT, TT.isArch64Bit(), Options);
   }
   uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TT.getOS());
-  return new LoongArchELFAsmBackend(STI, OSABI, TT.isArch64Bit(), Options);
+  return new LoongArchELFAsmBackend(STI, TT, OSABI, TT.isArch64Bit(), Options);
 }
