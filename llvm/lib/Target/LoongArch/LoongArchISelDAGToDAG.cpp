@@ -412,6 +412,7 @@ bool LoongArchDAGToDAGISel::selectVSplatUimmPow2(SDValue N,
 
 // This pass converts a legalized DAG into a LoongArch-specific DAG, ready
 // for instruction scheduling.
-FunctionPass *llvm::createLoongArchISelDag(LoongArchTargetMachine &TM) {
-  return new LoongArchDAGToDAGISel(TM);
+FunctionPass *llvm::createLoongArchISelDag(LoongArchTargetMachine &TM,
+                                           CodeGenOpt::Level OptLevel) {
+  return new LoongArchDAGToDAGISel(TM, OptLevel);
 }

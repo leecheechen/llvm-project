@@ -28,8 +28,9 @@ public:
 
   LoongArchDAGToDAGISel() = delete;
 
-  explicit LoongArchDAGToDAGISel(LoongArchTargetMachine &TM)
-      : SelectionDAGISel(ID, TM) {}
+  explicit LoongArchDAGToDAGISel(LoongArchTargetMachine &TM,
+                                 CodeGenOpt::Level OptLevel)
+      : SelectionDAGISel(ID, TM, OptLevel) {}
 
   bool runOnMachineFunction(MachineFunction &MF) override {
     Subtarget = &MF.getSubtarget<LoongArchSubtarget>();

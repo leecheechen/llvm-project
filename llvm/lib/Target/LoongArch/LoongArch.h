@@ -34,7 +34,8 @@ bool lowerLoongArchMachineOperandToMCOperand(const MachineOperand &MO,
                                              const AsmPrinter &AP);
 
 FunctionPass *createLoongArchExpandAtomicPseudoPass();
-FunctionPass *createLoongArchISelDag(LoongArchTargetMachine &TM);
+FunctionPass *createLoongArchISelDag(LoongArchTargetMachine &TM,
+                                     CodeGenOpt::Level OptLevel);
 FunctionPass *createLoongArchPreRAExpandPseudoPass();
 FunctionPass *createLoongArchExpandPseudoPass();
 void initializeLoongArchDAGToDAGISelPass(PassRegistry &);
