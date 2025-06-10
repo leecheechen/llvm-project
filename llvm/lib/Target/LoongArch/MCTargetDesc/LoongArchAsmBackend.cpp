@@ -271,6 +271,21 @@ bool LoongArchAsmBackend::shouldForceRelocation(const MCAssembler &Asm,
   case FK_Data_8:
   case FK_Data_leb128:
     return !Target.isAbsolute();
+  case LoongArch::fixup_loongarch_pcala_hi20:
+    // The PCALAU12I instruction adds some multiple of 0x1000 to the current PC
+    // & ~0xfff. This means that the required offset to reach a symbol can vary
+    // by up to one step depending on where the PCALAU12I is in memory. For
+    // example:
+    //
+    //     PCALAU12I $t0, %pc_hi20(there)
+    //  there:
+    //
+    // If the PCALAU12I occurs at address 0xffc then "there" will be at 0x1000
+    // and we'll need that as an offset. At any other address "there" will be in
+    // the same page as the PCALAU12I and the instruction should encode 0x0.
+    // Assuming the section isn't 0x1000-aligned, we therefore need to delegate
+    // this decision to the linker -- a relocation!
+    return true;
   }
 }
 
