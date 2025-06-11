@@ -50,7 +50,6 @@ LoongArchMCAsmInfoMicrosoftCOFF::LoongArchMCAsmInfoMicrosoftCOFF(
 
   Data16bitsDirective = "\t.hword\t";
   Data32bitsDirective = "\t.word\t";
-  Data64bitsDirective = "\t.xword\t";
 
   AlignmentIsInBytes = false;
   SupportsDebugInformation = true;
