@@ -455,7 +455,7 @@ void SectionChunk::applyRelLA64(uint8_t *off, uint16_t type, OutputSection *os,
     applyLA64Addr(off, s, p);
     break;
   case IMAGE_REL_LARCH_PCALA_LO12:
-   applyLA64Imm(off, s & 0xfff);
+    applyLA64Imm(off, s & 0xfff);
     break;
   case IMAGE_REL_LARCH_BRANCH26:
     applyLA64Branch26(off, s - p);
